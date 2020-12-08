@@ -1,3 +1,8 @@
-> 1%
-last 2 versions
-not dead
+#兼容到超過百分之一用戶使用的瀏覽器
+# > 1%
+#兼容到最新的兩個版本
+ # last 2 versions
+ # not dead
+
+Android >= 4.0
+iOS >= 8
