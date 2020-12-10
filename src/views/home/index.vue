@@ -5,8 +5,8 @@
       <van-button slot="title" class="search-btn" icon="search" round size="small" type="info">搜索</van-button>
     </van-nav-bar>
      <!--文章标签页-->
-    <van-tabs v-model="active">
-      <van-tab v-for="channel in channels" :key="channel.id" :title="channel.name">
+    <van-tabs v-model="active" class="channel-tabs">
+      <van-tab class="tab-item" v-for="channel in channels" :key="channel.id" :title="channel.name">
         <!--文章列表页-->
         <article-list :channel="channel"></article-list>
       </van-tab>
@@ -56,6 +56,18 @@ export default {
   }
   .van-button__text{
     font-size: 14px;
+  }
+  .channel-tabs{
+    /deep/ .van-tab{
+      border-right: 1px solid rgb(245, 242, 242);
+       border-bottom: 1px solid rgb(245, 242, 242);
+    }
+    /deep/ .va-tabs__line{
+      bottom: 20px;
+      width: 15px !important;
+      height: 3px;
+      background: #3692fa;
+    }
   }
 }
 </style>
