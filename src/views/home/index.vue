@@ -10,22 +10,43 @@
         <!--文章列表页-->
         <article-list :channel="channel"></article-list>
       </van-tab>
+      <div slot="nav-right" style="flex-shrink:0; width:33px"></div>
+      <div slot="nav-right"
+       @click="isChannelEditShow=true"
+       class="wap-nav-wrap"
+       >
+        <van-icon name="wap-nav" />
+      </div>
     </van-tabs>
+    <!-- 弹出层 -->
+    <van-popup v-model="isChannelEditShow"
+     position="bottom"
+     class="channel-edit-popup"
+     get-container="body"
+     closeable
+     close-icon-position="top-left"
+     style="height:100%"
+    >
+    <channel-edit :user-channels="channels" />
+    </van-popup>
   </div>
 </template>
 
 <script>
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list'
+import ChannelEdit from './components/channel-edit'
 export default {
   name: 'HomeIndex',
   components: {
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
   data () {
     return {
       active: 0, // 控制被激活的标签，以0为索引值开始
-      channels: []// 频道列表
+      channels: [], // 频道列表
+      isChannelEditShow: true
     }
   },
   created () {
@@ -67,6 +88,20 @@ export default {
       width: 15px !important;
       height: 3px;
       background: #3692fa;
+    }
+  }
+  .wap-nav-wrap{
+    position: fixed;
+    right: 0;
+    width: 33px;
+    height: 44px;
+    line-height: 43px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, .8);
+    .van-icon{
+      font-size: 24px;
     }
   }
 }
