@@ -27,7 +27,12 @@
      close-icon-position="top-left"
      style="height:100%"
     >
-    <channel-edit :user-channels="channels" />
+    <!-- @close="isChannelEditShow=false"用于接收子组件的点击事件 -->
+    <channel-edit :user-channels="channels"
+    :active="active"
+    @close="isChannelEditShow=false"
+    @updata-active="onUpdataActive"
+     />
     </van-popup>
   </div>
 </template>
@@ -36,6 +41,8 @@
 import { getUserChannels } from '@/api/user'
 import ArticleList from './components/article-list'
 import ChannelEdit from './components/channel-edit'
+import { mapState } from 'vuex'
+import { getItem } from '@/utils/storeage'
 export default {
   name: 'HomeIndex',
   components: {
@@ -46,16 +53,40 @@ export default {
     return {
       active: 0, // 控制被激活的标签，以0为索引值开始
       channels: [], // 频道列表
-      isChannelEditShow: true
+      isChannelEditShow: false
     }
+  },
+  computed: {
+    ...mapState(['user'])
   },
   created () {
     this.loadChannels()
   },
   methods: {
     async loadChannels () { // 请求接口文章数据
-      const { data } = await getUserChannels()
-      this.channels = data.data.channels
+      // const { data } = await getUserChannels()
+      // this.channels = data.data.channels
+      let channels = []
+      if (this.user) {
+        // 登录状态下，请求线上数据
+        const { data } = await getUserChannels()
+        channels = data.data.channels
+      } else {
+        // 未登录状态，判断本地是否存有数据
+        const localChannels = getItem('user-channel')
+        if (localChannels) { // 如果有本地存储，则使用本地数据
+          channels = localChannels
+        } else { // 如果没有本地存储，也没有登录，则请求默认的推荐的频道列表
+          const { data } = await getUserChannels()
+          channels = data.data.channels
+        }
+      }
+      // 把处理好的数据放到data中，以供模板使用
+      this.channels = channels
+    },
+    onUpdataActive (index) {
+      // 激活指定索引的状态
+      this.active = index
     }
   }
 }
