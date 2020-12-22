@@ -34,7 +34,18 @@ const routes = [
         component: () => import('@/views/mine/')
       }
     ]
+  },
+  {
+    path: '/search',
+    name: 'search',
+    component: () => import('@/views/search/')
+  },
+  {
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('@/views/article/')
   }
+
 ]
 const router = new VueRouter({
   routes

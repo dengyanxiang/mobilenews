@@ -18,7 +18,7 @@
        :article="article
        :title="article.title" />
        -->
-       <van-cell v-for="item in list" :key="item" :title="item" />
+       <van-cell  v-for="item in list" :key="item" :title="item"  />
     </van-list>
   </van-pull-refresh>
  </div>
@@ -110,7 +110,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="less">
 .article-list{
   position: fixed;
   top: 90px;
@@ -118,5 +118,8 @@ export default {
   right: 0;
   bottom: 50px;
   overflow-y: scroll;
+  // .list-item{
+  //   background-color: rgb(235, 229, 229);
+  // }
 }
 </style>
