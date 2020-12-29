@@ -18,7 +18,7 @@
        :article="article
        :title="article.title" />
        -->
-       <van-cell  v-for="item in list" :key="item" :title="item"  />
+       <van-cell  v-for="item in list" :key="item" :title="item" to="/article"/>
     </van-list>
   </van-pull-refresh>
  </div>
@@ -47,7 +47,8 @@ export default {
       finished: false, // 用来控制结束的状态，当加载中时，值为true；当结束加载时，值为false，不再加载更多
       timestamp: null, // 用于接收获取的时间戳
       isRefreshLoading: false,
-      refreshSuccessText: '' // 刷新后的提示信息
+      refreshSuccessText: '', // 刷新后的提示信息
+      url: 'https://cn.vuejs.org/'
     }
   },
   methods: {
