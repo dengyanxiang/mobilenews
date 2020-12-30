@@ -5,27 +5,35 @@
      class="app-nav-bar"
      left-arrow
      @click-left="$router.back()" />
-    <h1 class="title">有哪些类似《天才枪手》里的作弊手段和故事？</h1>
-    <van-cell center>
-         <van-image
-        class="img"
-        slot="icon"
-        round
-        fit="cover"
-        src="https://img.yzcdn.cn/vant/cat.jpeg"
-        />
-        <div slot="title" class="title">天涯小夏卡尔</div>
-        <div class="time-lable" slot="label">14小时前发布</div>
-        <van-button
-        class="btn" round
-        :type="isFocus==true?'info':'warning'"
-        slot="right-icon"
-        :icon="isFocus==true?'':'plus'"
-        @click="onFocus"
-        >{{this.isFocus==true?'取消关注':'关注'}}</van-button>
-    </van-cell>
-    <div class="content markdown-body">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Minima architecto similique quod obcaecati expedita fugiat sit tempore veniam nisi natus suscipit iure eos consequuntur perspiciatis commodi assumenda quas, dolor repudiandae quis hic? Nulla ex nam, id ad sequi excepturi magnam quia, nesciunt recusandae aliquam quidem, officia beatae! Temporibus officiis ut autem quo harum quidem, dolor voluptatibus similique quas incidunt, voluptates ab culpa illo illum. Ducimus excepturi corrupti aliquid, quam omnis itaque libero eos explicabo harum quod autem iusto officia odit voluptates provident culpa adipisci nobis earum distinctio rerum repudiandae. Deleniti omnis harum autem molestias impedit doloribus fuga neque quos adipisci! Voluptatem qui consequatur incidunt neque debitis placeat, voluptatum ratione impedit? Libero quas magni esse nostrum officia vitae maxime nesciunt quisquam ad aut hic nemo reprehenderit veniam modi nam eos quaerat, consectetur dolor quasi nihil impedit laudantium molestias, maiores commodi. Praesentium ab numquam sapiente rem porro corrupti animi accusamus exercitationem perferendis, a doloribus hic aperiam asperiores nisi illum amet ex voluptatum facere voluptatem, voluptates cupiditate, recusandae assumenda corporis eaque. Laudantium deserunt minus quia vel nobis, unde, molestiae dignissimos fuga ut iure sunt animi qui laborum reprehenderit architecto officiis velit! Quisquam, optio vitae delectus a dolore facere veritatis totam eveniet. Illum, impedit!</p>
+     <div class="wrap">
+      <h1 class="title">{{article.title}}</h1>
+      <!--有哪些类似《天才枪手》里的作弊手段和故事？-->
+      <van-cell center>
+         <!--https://img.yzcdn.cn/vant/cat.jpeg-->
+          <van-image
+          class="img"
+          slot="icon"
+          round
+          fit="cover"
+          :src="article.aut_photo"
+          />
+          <!--天涯小夏卡尔-->
+          <div slot="title" class="title">{{article.aut_name}}</div>
+          <!--14小时前发布-->
+          <div class="time-lable" slot="label">{{article.pubdata | relativeTime}}</div>
+          <van-button
+          class="btn" round
+          :type="article.is_followed ? 'default':'info'"
+          slot="right-icon"
+          :icon="article.is_followed ? '':'plus'"
+          :loading="isFollowLoading"
+          @click="onFollow"
+          >{{article.is_followed ? '已关注':'关注'}}</van-button>
+      </van-cell>
+      <div class="content markdown-body" v-html="article.content">
+      </div>
+      <!--评论区域-->
+       <comment-list :source="articleId" />
     </div>
     <!-- 底部区域 -->
     <div class="article-bottom">
@@ -41,14 +49,15 @@
         color="#777"
       />
       <van-icon
-      :name="this.isColected==true?'star':'star-o'"
-      :color="this.isColected==true?'red':'#777'"
-      @click="onStar"
+      :name="article.is_collected?'star':'star-o'"
+      :color="article.is_collected?'orange':'#777'"
+      :click="onCollect"
       />
       <van-icon
-       :name="this.isLike==true?'good-job':'good-job-o'"
-       :color="this.isLike==true?'red':'#777'"
-       @click="onLike" />
+       :name="article.attitude === 1 ? 'good-job':'good-job-o'"
+       :color="article.attitude === 1 ?'pink':'#777'"
+       @click="onLike"
+      />
       <van-icon name="share" color="#777777"></van-icon>
     </div>
     <!-- /底部区域 -->
@@ -57,55 +66,119 @@
 
 <script>
 import './markdown-css.css'
-import { setItem } from '@/utils/storeage'
+import { getArticleById, addCollect, deleteCollect, addLike, deleteLike } from '@/api/articles'
+import { addFollow, deleteFollow } from '@/api/user'
+import CommentList from './components/comment-list'
 export default {
   name: 'ArticleIndex',
-  data () {
-    return {
-      isFocus: false,
-      isColected: false,
-      isLike: false
+  components: {
+    CommentList
+  },
+  props: {
+    articleId: {
+      type: [String, Number, Object],
+      required: true
     }
   },
-  methods: {
-    onFocus () {
-      const isFocus = this.isFocus
-      if (!this.isFocus) {
-        this.isFocus = !this.isFocus
-        this.$toast.success('关注成功')
-      } else {
-        this.isFocus = !isFocus
-        this.$toast.success('已取消点赞')
-      }
-      setItem('isFocus', this.isFocus)
-    },
-    onStar () {
-      const isColected = this.isColected
-      if (!this.isColected) {
-        this.isColected = !this.isColected
-        this.$toast.success('收藏成功')
-      } else {
-        this.isColected = !isColected
-        this.$toast.success('已取消收藏')
-      }
-      setItem('isColected', this.isColected)
-    },
-    onLike () {
-      const isLike = this.isLike
-      if (!this.isLike) {
-        this.isLike = !this.isLike
-        this.$toast.success('点赞成功')
-      } else {
-        this.isLike = !isLike
-        this.$toast.success('已取消点赞')
-      }
-      setItem('isLike', this.isLike)
+  data () {
+    return {
+      article: {}, // 文章数据对象
+      isFollowLoading: false,
+      isCollectLoading: false
     }
+  },
+  created () {
+    this.loadArticle()
+  },
+  methods: {
+    async  loadArticle () {
+      const { data } = await getArticleById(this.articleId)
+      this.article = data.data
+    },
+    async onFollow () {
+      this.isFollowLoading = true
+      if (this.article.is_followed) {
+        // 已关注，则取消关注
+        await deleteFollow(this.article.aut_id)
+      } else {
+        // 未关注，则点击关注
+        await addFollow(this.article.aut_id)
+      }
+      this.article.is_followed = !this.article.is_followed
+      this.isFollowLoading = false
+    },
+    async onCollect () {
+      this.isCollectLoading = true
+      if (this.article.is_collected) {
+        // 已收藏，则取消收藏
+        await deleteCollect(this.articleId)
+        this.$toast.success('取消收藏')
+      } else {
+        // 未收藏，则点击收藏
+        await addCollect(this.articleId)
+        this.$toast.success('收藏成功')
+      }
+      this.article.is_collected = !this.article.is_collected
+      this.isCollectLoading = false
+    },
+    async onLike () {
+      if (this.article.attitude === 1) {
+        // 已点赞，则取消点赞
+        await deleteLike(this.articleId)
+        this.article.attitude = -1
+        this.$toast.success('取消点赞成功')
+      } else {
+        // 未点赞，则点击点赞
+        await addLike(this.articleId)
+        this.article.attitude = 1
+        this.$toast.success('点赞成功')
+      }
+    }
+    // onFocus () {
+    //   const isFocus = this.isFocus
+    //   if (!this.isFocus) {
+    //     this.isFocus = !this.isFocus
+    //     this.$toast.success('关注成功')
+    //   } else {
+    //     this.isFocus = !isFocus
+    //     this.$toast.success('已取消点赞')
+    //   }
+    //   setItem('isFocus', this.isFocus)
+    // },
+    // onStar () {
+    //   const isColected = this.isColected
+    //   if (!this.isColected) {
+    //     this.isColected = !this.isColected
+    //     this.$toast.success('收藏成功')
+    //   } else {
+    //     this.isColected = !isColected
+    //     this.$toast.success('已取消收藏')
+    //   }
+    //   setItem('isColected', this.isColected)
+    // },
+    // onLike () {
+    //   const isLike = this.isLike
+    //   if (!this.isLike) {
+    //     this.isLike = !this.isLike
+    //     this.$toast.success('点赞成功')
+    //   } else {
+    //     this.isLike = !isLike
+    //     this.$toast.success('已取消点赞')
+    //   }
+    //   setItem('isLike', this.isLike)
+    // }
   }
 }
 </script>
-
 <style scoped lang="less">
+.wrap{
+  position: fixed;
+  top: 44px;
+  left: 0;
+  right: 0;
+  bottom: 44px;
+  overflow-y: auto;
+}
 .title{
     font-size: 22px;
     color: rgb(14, 13, 13);
