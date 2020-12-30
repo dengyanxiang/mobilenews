@@ -30,7 +30,7 @@
           @click="onFollow"
           >{{article.is_followed ? '已关注':'关注'}}</van-button>
       </van-cell>
-      <div class="content markdown-body" v-html="article.content">
+      <div class="content markdown-body" v-html="article.content" ref="article-content">
       </div>
       <!--评论区域-->
        <comment-list :source="articleId" />
@@ -67,6 +67,7 @@
 <script>
 import './markdown-css.css'
 import { getArticleById, addCollect, deleteCollect, addLike, deleteLike } from '@/api/articles'
+import { ImagePreview } from 'vant'
 import { addFollow, deleteFollow } from '@/api/user'
 import CommentList from './components/comment-list'
 export default {
@@ -94,6 +95,31 @@ export default {
     async  loadArticle () {
       const { data } = await getArticleById(this.articleId)
       this.article = data.data
+      // 得到所有的IMG元素
+      // 数据影响视图更新不是立即的，所以
+      // 如果需要在修改数据之后立即使用该数据，需要将其放入 $nextTick（）函数中，才能立即使用数据
+      this.$nextTick(() => {
+        this.handlePreviewImage()
+      })
+    },
+    handlePreviewImage () {
+      // 1.获取文章DOM 容器
+      const articleContent = this.$refs['article-content']
+      // 2.获取所有的IMG 元素
+      const imgs = articleContent.querySelectorAll('img')
+      // 用于存储图片的地址
+      const imgPaths = []
+      imgs.forEach((img, index) => {
+        imgPaths.push(img.src)
+        // // 3.循环IMG元素，对图片进行点击事件注册
+        img.onclick = function () {
+          // 4.在处理事件中调用 ImagePreview 函数
+          ImagePreview({
+            images: imgPaths, // 预览图片路径列表
+            startPosition: index
+          })
+        }
+      })
     },
     async onFollow () {
       this.isFollowLoading = true
