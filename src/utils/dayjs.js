@@ -13,3 +13,6 @@ dayjs.locale('zh-cn') // 全局使用
 Vue.filter('relativeTime', value => {
   return dayjs(value).from(dayjs()) // 用于计算相对事件
 })
+Vue.filter('dataTime', (value, format = 'YYYY-MM-DD HH-mm-ss') => {
+  return dayjs(value).format(format) // 用于计算相对事件
+})

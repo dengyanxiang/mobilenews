@@ -33,7 +33,10 @@
       <div class="content markdown-body" v-html="article.content" ref="article-content">
       </div>
       <!--评论区域-->
-       <comment-list :source="articleId" />
+      <van-cell>评论列表</van-cell>
+       <comment-list
+        :list="commentList"
+        :source="articleId" />
     </div>
     <!-- 底部区域 -->
     <div class="article-bottom">
@@ -42,6 +45,7 @@
         type="default"
         round
         size="small"
+        @click="isPostShow = true"
       >写评论</van-button>
       <van-icon
         name="comment-o"
@@ -49,9 +53,9 @@
         color="#777"
       />
       <van-icon
-      :name="article.is_collected?'star':'star-o'"
-      :color="article.is_collected?'orange':'#777'"
-      :click="onCollect"
+      :name="article.is_collected ? 'star':'star-o'"
+      :color="article.is_collected ? 'orange':'#777'"
+      @click="onCollect"
       />
       <van-icon
        :name="article.attitude === 1 ? 'good-job':'good-job-o'"
@@ -61,6 +65,16 @@
       <van-icon name="share" color="#777777"></van-icon>
     </div>
     <!-- /底部区域 -->
+    <!--发布评论-->
+    <van-popup
+      v-model="isPostShow"
+      position="bottom"
+     >
+     <post-comment
+      :target="articleId"
+      :post-success="onPostSuccess"
+       />
+     </van-popup>
  </div>
 </template>
 
@@ -70,10 +84,12 @@ import { getArticleById, addCollect, deleteCollect, addLike, deleteLike } from '
 import { ImagePreview } from 'vant'
 import { addFollow, deleteFollow } from '@/api/user'
 import CommentList from './components/comment-list'
+import PostComment from './components/post-comment'
 export default {
   name: 'ArticleIndex',
   components: {
-    CommentList
+    CommentList,
+    PostComment
   },
   props: {
     articleId: {
@@ -85,7 +101,9 @@ export default {
     return {
       article: {}, // 文章数据对象
       isFollowLoading: false,
-      isCollectLoading: false
+      isCollectLoading: false,
+      isPostShow: false, // 控制评论区域弹出层的显示状态
+      commentList: [] // 使评论列表的子组件用于接收列表数据
     }
   },
   created () {
@@ -134,7 +152,7 @@ export default {
       this.isFollowLoading = false
     },
     async onCollect () {
-      this.isCollectLoading = true
+      // this.isCollectLoading = true
       if (this.article.is_collected) {
         // 已收藏，则取消收藏
         await deleteCollect(this.articleId)
@@ -159,6 +177,16 @@ export default {
         this.article.attitude = 1
         this.$toast.success('点赞成功')
       }
+    },
+    onPostSuccess (comment) { // 发布评论成功时调用的函数
+      this.$toast.loading({
+        message: '发布中...',
+        forbidClick: true
+      })
+      // 把发布成功的评论添加到评论列表顶部
+      this.CommentList.unshift(comment)
+      // 把评论弹出层关闭
+      this.isPostShow = false
     }
     // onFocus () {
     //   const isFocus = this.isFocus
