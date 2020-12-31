@@ -41,6 +41,8 @@ export default {
       })
       this.$emit('post-success', data.data.new_obj)
       this.$toast.success('发布成功')
+      // 更新评论总数
+      this.totalCommentCount++
       // 发布成功后清空输入框内容
       this.message = ''
     }

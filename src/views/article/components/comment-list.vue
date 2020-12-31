@@ -6,7 +6,11 @@
         finished-text="没有更多了"
         @load="onLoad"
         >
-        <comment-item v-for="(comment, index) in list" :key="index" :comment="comment" />
+        <comment-item v-for="(comment, index) in list"
+         :key="index"
+         :comment="comment"
+         @reply-click="$emit('reply-click', $event)"
+         />
         <!-- <van-cell v-for="(comment, index) in list" :key="index" :title="comment.title" /> -->
         </van-list>
 </div>
@@ -50,6 +54,7 @@ export default {
         offset: this.offset, // 获取下一页数据的页码
         limit: this.limit
       })
+      this.$emit('updata-comment-count', data.data.total_count)
       // 2.把获取到的数据添加到列表
       const { results } = data.data
       this.list.push(...results)

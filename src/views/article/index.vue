@@ -36,7 +36,10 @@
       <van-cell>评论列表</van-cell>
        <comment-list
         :list="commentList"
-        :source="articleId" />
+        :source="articleId"
+        @updata-comment-count="totalCommentCount = $event"
+        @reply-click="onReplyClick"
+         />
     </div>
     <!-- 底部区域 -->
     <div class="article-bottom">
@@ -49,7 +52,7 @@
       >写评论</van-button>
       <van-icon
         name="comment-o"
-        badge="123"
+        :badge="totalCommentCount"
         color="#777"
       />
       <van-icon
@@ -74,7 +77,17 @@
       :target="articleId"
       :post-success="onPostSuccess"
        />
-     </van-popup>
+    </van-popup>
+    <!--评论回复-->
+     <van-popup
+      v-model="isReplyShow"
+      position="bottom"
+     >
+     <comment-reply
+     :comment="replyComment"
+     @close="isReplyShow=false"
+      />
+    </van-popup>
  </div>
 </template>
 
@@ -85,11 +98,13 @@ import { ImagePreview } from 'vant'
 import { addFollow, deleteFollow } from '@/api/user'
 import CommentList from './components/comment-list'
 import PostComment from './components/post-comment'
+import CommentReply from './components/comment-reply'
 export default {
   name: 'ArticleIndex',
   components: {
     CommentList,
-    PostComment
+    PostComment,
+    CommentReply
   },
   props: {
     articleId: {
@@ -103,7 +118,10 @@ export default {
       isFollowLoading: false,
       isCollectLoading: false,
       isPostShow: false, // 控制评论区域弹出层的显示状态
-      commentList: [] // 使评论列表的子组件用于接收列表数据
+      commentList: [], // 使评论列表的子组件用于接收列表数据
+      totalCommentCount: 0,
+      isReplyShow: false, // 控制回复的点击状态
+      replyComment: {} // 当前评论回复对象
     }
   },
   created () {
@@ -187,6 +205,12 @@ export default {
       this.CommentList.unshift(comment)
       // 把评论弹出层关闭
       this.isPostShow = false
+    },
+    onReplyClick (comment) {
+      console.log('onReplyClick', comment)
+      this.replyComment = comment
+      // 展示回复内容
+      this.isReplyShow = true
     }
     // onFocus () {
     //   const isFocus = this.isFocus

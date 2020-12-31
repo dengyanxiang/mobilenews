@@ -20,7 +20,14 @@
         <div class="descrble">{{comment.content}}</div>
         <div class="time-wrap">
             <span class="time">{{comment.pubdate | dataTime}}</span>
-            <van-button class="btn" round size="mini">{{comment.reply_count}}条回复</van-button>
+            <van-button
+             class="btn"
+             round
+             size="mini"
+             @click="$emit('reply-click',comment)"
+             >
+              {{comment.reply_count}}条回复
+              </van-button>
         </div>
     </div>
     <!-- <van-image
