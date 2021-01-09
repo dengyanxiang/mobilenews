@@ -83,8 +83,11 @@
       v-model="isReplyShow"
       position="bottom"
      >
+     <!-- 使用v-if的目的是为了让评论列表随着弹出成的关闭而消失 -->
      <comment-reply
+     v-if="isReplyShow"
      :comment="replyComment"
+     :article-id="articleId"
      @close="isReplyShow=false"
       />
     </van-popup>

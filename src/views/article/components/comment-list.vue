@@ -37,6 +37,10 @@ export default {
   components: {
     CommentItem
   },
+  type: { // 获取文章评论，使用————>a  获取评论回复，使用————> c
+    type: String,
+    default: 'a'
+  },
   data () {
     return {
       loading: false,
@@ -49,8 +53,8 @@ export default {
     async onLoad () {
       // 1.请求获取数据
       const { data } = await getComments({
-        type: 'a', // 评论类型 a->文章（article）评论； c-> 评论（comment）的回复
-        source: this.source, // 源ID，文章的ID 或 评论的ID
+        type: this.type, // 评论类型 a->文章（article）评论； c-> 评论（comment）的回复
+        source: this.source.toString(), // 源ID，文章的ID 或 评论的ID
         offset: this.offset, // 获取下一页数据的页码
         limit: this.limit
       })

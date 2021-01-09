@@ -10,7 +10,7 @@
          :src="currentUser.photo" />
 <!--下面的个人资料的信息都是currentUser中的json信息-->
         <div class="name" slot="title">昵称</div>
-        <van-button class="update-btn" size="small" round >编辑资料</van-button>
+        <van-button class="update-btn" size="small" round to="/user/profile">编辑资料</van-button>
       </van-cell>
       <van-grid class="data-info" :border="false">
         <van-grid-item  class="data-info-item">
