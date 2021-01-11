@@ -87,3 +87,13 @@ export const updataUserProfile = data => {
     data
   })
 }
+/**
+ * 修改用户个人资料
+ */
+export const updataUserPhoto = data => {
+  return request({
+    method: 'PATCH',
+    url: '/app/v1_0/user/photo',
+    data
+  })
+}

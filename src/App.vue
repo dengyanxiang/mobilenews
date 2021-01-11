@@ -1,11 +1,18 @@
 <template>
   <div id="app">
-    <router-view />
+    <!-- 利用 :include="['LayoutIndex'] 进行有条件的缓存，只缓存中括号内部的组件 -->
+    <keep-alive :include="cachePages">
+       <router-view />
+    </keep-alive>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
-  name: 'App'
+  name: 'App',
+  computed: {
+    ...mapState(['cachePages'])
+  }
 }
 </script>
 

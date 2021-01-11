@@ -78,6 +78,8 @@ export default {
         // 将后端返回的数据存储到vuex容器中
         this.$store.commit('setUser', data.data)
         // console.log(res)
+        // 清除 layout 的缓存，让其重新渲染
+        this.$store.commit('removeCachePages', 'LayoutIndex')
         // Toast.success('登陆成功')
         // 登陆成功，跳转到原来的页面
         this.$router.back()

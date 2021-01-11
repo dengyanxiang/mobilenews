@@ -50,7 +50,7 @@
       <van-grid-item class="nav-grid-item" icon="browsing-history-o" text="历史" />
     </van-grid>
     <van-cell title=消息通知 is-link url="/" />
-    <van-cell class="mb-4" title="小智同学" is-link to="/" />
+    <van-cell class="mb-4" title="小智同学" is-link to="/user/chat" />
     <van-cell
       class="logout-cell"
       v-if="user"

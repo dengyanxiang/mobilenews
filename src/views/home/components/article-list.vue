@@ -1,5 +1,5 @@
 <template>
- <div class="article-list">
+ <div class="article-list" ref="article-list">
   <van-pull-refresh
    v-model="isRefreshLoading"
    :success-text="refreshSuccessText"
@@ -26,6 +26,7 @@
 import { Toast } from 'vant'
 import { getArticles } from '@/api/articles'
 import ArticleItem from '@/components/article-item'
+import { debounce } from 'lodash'
 export default {
   name: 'ArticleList',
   components: {
@@ -45,8 +46,19 @@ export default {
       timestamp: null, // 用于接收获取的时间戳
       isRefreshLoading: false,
       refreshSuccessText: '', // 刷新后的提示信息
-      url: 'https://cn.vuejs.org/'
+      url: 'https://cn.vuejs.org/',
+      scrollTop: 0 // 列表顶部滚动的距离
     }
+  },
+  mounted () {
+    const articleList = this.$refs['article-list']
+    articleList.onscroll = debounce(() => {
+      this.scrollTop = articleList.scrollTop
+    }, 50)
+  },
+  activated () {
+    // 把记录的到顶部的距离重新设置回去
+    this.$refs['article-list'] = this.scrollTop
   },
   methods: {
     async onLoad () {
