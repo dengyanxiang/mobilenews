@@ -82,7 +82,8 @@ export default {
         this.$store.commit('removeCachePages', 'LayoutIndex')
         // Toast.success('登陆成功')
         // 登陆成功，跳转到原来的页面
-        this.$router.back()
+        // this.$router.back()
+        this.$router.push(this.$route.query.redirect || '/')
       } catch (err) {
         // console.log(err)
         // console.log('登陆失败', err)
